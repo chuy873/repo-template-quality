@@ -1,0 +1,49 @@
+name: quality
+
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    quality:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+                uses: actions/checkout@v4
+
+            # Si usas una herramienta concreta (Node/Go/Python), aquí configuras el runtime.
+            # Mantengo esto agnóstico para que no "asuma" stack.
+            - name: Lint
+                run: make lint
+
+            - name: Test
+                run: make test
+
+            - name: Coverage
+                run: make coverage
+
+            - name: Security (SAST/SBOM)
+                run: make security
+
+            - name: Benchmarks (opcional)
+                if: github.event_name == 'push'
+                run: make bench
+
+            - name: Profiles (opcional)
+                if: github.event_name == 'push'
+                run: make profile
+
+            - name: Pack reports
+                run: |
+                    mkdir -p artifacts
+                    [ -d benchmarks/results ] && cp -r benchmarks/results artifacts/ || true
+                    [ -d profiling ] && cp -r profiling artifacts/ || true
+                    [ -d security/sast ] && cp -r security/sast artifacts/ || true
+
+            - name: Upload artifacts
+                uses: actions/upload-artifact@v4
+                with:
+                    name: quality-reports
+                    path: artifacts
