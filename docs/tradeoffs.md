@@ -1,0 +1,1 @@
+- [ ] Coste/beneficio de alternativas implementadas (enfocado en correctitud, rendimiento y seguridad)
