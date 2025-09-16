@@ -1,0 +1,15 @@
+# comunes
+.DS_Store
+*.log
+node_modules/
+venv/
+.env
+.env.*
+coverage/
+dist/
+build/
+.cache/
+.prof/
+*.prof
+__pycache__/
+*.pyc
